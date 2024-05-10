@@ -1,5 +1,9 @@
-.env
+# Auto generated
 node_modules
-google/credentials.json
 cache.json
 log/
+
+# Need to be copied
+.env
+google/credentials.json
+vapid.json
