@@ -1,6 +1,7 @@
 import config from "../config.js";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import dayjs from "dayjs";
+import error from "./error.js";
 import wrapper from "./wrapper.js";
 
 dayjs.extend(customParseFormat);
@@ -8,8 +9,10 @@ dayjs.extend(customParseFormat);
 const html = String.raw;
 
 export default ({ date, canNext, canPrev, serverData }) => {
-	if (!serverData) return "no server data";
-	if (!serverData.hasOwnProperty(date)) return "no serverData[date]";
+	if (!serverData) return error("No data returned from Google Sheets");
+
+	if (!serverData.hasOwnProperty(date))
+		return error("No roles found for given date");
 
 	return wrapper(html`
 		<header>
