@@ -2,6 +2,7 @@
 node_modules
 cache.json
 log/
+private/
 
 # Need to be copied
 .env
