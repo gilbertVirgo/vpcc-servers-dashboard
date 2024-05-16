@@ -17,8 +17,8 @@ dayjs.extend(customParseFormat);
 
 dotenv.config();
 
-const server = ((isRunningSSLAndCertsAvailable) => {
-	if (isRunningSSLAndCertsAvailable) {
+const server = ((isSSLKeyAndCertAvailable) => {
+	if (isSSLKeyAndCertAvailable) {
 		return https.createServer(
 			{
 				key: fs.readFileSync(process.env.SSL_KEY_PATH),
@@ -27,11 +27,7 @@ const server = ((isRunningSSLAndCertsAvailable) => {
 			express()
 		);
 	} else return express();
-})(
-	!!process.env.SSL &&
-		!!process.env.SSL_KEY_PATH &&
-		!!process.env.SSL_CERT_PATH
-);
+})(!!process.env.SSL_KEY_PATH && !!process.env.SSL_CERT_PATH);
 
 cron.schedule("* * * * *", () => refreshCache());
 
