@@ -6,19 +6,32 @@ import dotenv from "dotenv";
 import express from "express";
 import fs from "fs";
 import getCachedData from "./helpers/getCachedData.js";
-import getDirname from "./helpers/getDirname.js";
 import getNextSunday from "./helpers/getNextSunday.js";
 import getPrevSunday from "./helpers/getPrevSunday.js";
 import getThisSunday from "./helpers/getThisSunday.js";
 import html from "./html/index.js";
-import path from "path";
+import https from "https";
 import refreshCache from "./helpers/refreshCache.js";
 
 dayjs.extend(customParseFormat);
 
 dotenv.config();
 
-const server = express();
+const server = ((isRunningSSLAndCertsAvailable) => {
+	if (isRunningSSLAndCertsAvailable) {
+		return https.createServer(
+			{
+				key: fs.readFileSync(process.env.SSL_KEY_PATH),
+				cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+			},
+			express()
+		);
+	} else return express();
+})(
+	!!process.env.SSL &&
+		!!process.env.SSL_KEY_PATH &&
+		!!process.env.SSL_CERT_PATH
+);
 
 cron.schedule("* * * * *", () => refreshCache());
 
