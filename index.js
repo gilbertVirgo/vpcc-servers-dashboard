@@ -28,6 +28,8 @@ const init = async () => {
 		path.join(getDirname(import.meta.url), "main.css")
 	);
 
+	server.use("/.well-known", express.static(".well-known"));
+
 	server.get("/css", (req, res) => {
 		res.setHeader("Content-Type", "text/css");
 		res.send(mainCSSFile);
