@@ -19,6 +19,8 @@ dotenv.config();
 
 const server = ((isSSLKeyAndCertAvailable) => {
 	if (isSSLKeyAndCertAvailable) {
+		console.log("Running SSL!");
+
 		return https.createServer(
 			{
 				key: fs.readFileSync(process.env.SSL_KEY_PATH),
