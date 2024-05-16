@@ -30,6 +30,8 @@ const init = async () => {
 
 	server.use(express.static("public"));
 
+	server.use("/.well-known", express.static(".well-known"));
+
 	server.get("/", (req, res) => {
 		res.redirect("/" + getThisSunday());
 	});
