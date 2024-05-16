@@ -9,7 +9,7 @@ export default (content) => html`
 				name="viewport"
 				content="width=device-width, initial-scale=1.0"
 			/>
-			<link rel="stylesheet" href="/css" />
+			<link rel="stylesheet" href="/main.css" />
 			<title>VPCC Servers</title>
 		</head>
 		<body>
