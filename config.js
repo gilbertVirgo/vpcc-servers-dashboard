@@ -1,8 +1,12 @@
 import getDirname from "./helpers/getDirname.js";
 import path from "path";
 
+const __dirname = getDirname(import.meta.url),
+	privateDirectoryPath = path.join(__dirname, "private");
+
 export default {
-	cacheFilePath: path.join(getDirname(import.meta.url), "cache.json"),
+	privateDirectoryPath,
+	cacheFilePath: path.join(privateDirectoryPath, "cache.json"),
 	roleColours: {
 		Welcome: "#aaaaff",
 		Preaching: "#aaffaa",
