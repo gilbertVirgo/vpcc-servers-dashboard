@@ -17,19 +17,7 @@ dayjs.extend(customParseFormat);
 
 dotenv.config();
 
-const server = ((isSSLKeyAndCertAvailable) => {
-	if (isSSLKeyAndCertAvailable) {
-		console.log("Running SSL!");
-
-		return https.createServer(
-			{
-				key: fs.readFileSync(process.env.SSL_KEY_PATH),
-				cert: fs.readFileSync(process.env.SSL_CERT_PATH),
-			},
-			express()
-		);
-	} else return express();
-})(!!process.env.SSL_KEY_PATH && !!process.env.SSL_CERT_PATH);
+const app = express();
 
 cron.schedule("* * * * *", () => refreshCache());
 
@@ -39,27 +27,27 @@ const init = async () => {
 
 	await refreshCache();
 
-	server.use(express.static("public"));
+	app.use(express.static("public"));
 
-	server.use("/.well-known", express.static(".well-known"));
+	app.use("/.well-known", express.static(".well-known"));
 
-	server.get("/", (req, res) => {
+	app.get("/", (req, res) => {
 		res.redirect("/" + getThisSunday());
 	});
 
-	server.get("/:date/prev", async (req, res) => {
+	app.get("/:date/prev", async (req, res) => {
 		const date = dayjs(req.params.date, "YYYY-MM-DD");
 
 		res.redirect("/" + getPrevSunday(date));
 	});
 
-	server.get("/:date/next", async (req, res) => {
+	app.get("/:date/next", async (req, res) => {
 		const date = dayjs(req.params.date, "YYYY-MM-DD");
 
 		res.redirect("/" + getNextSunday(date));
 	});
 
-	server.get("/:date", async (req, res) => {
+	app.get("/:date", async (req, res) => {
 		const date = dayjs(req.params.date, "YYYY-MM-DD");
 
 		if (date.isBefore(dayjs(), "day"))
@@ -78,6 +66,20 @@ const init = async () => {
 			})
 		);
 	});
+
+	const server = ((isSSLKeyAndCertAvailable) => {
+		if (isSSLKeyAndCertAvailable) {
+			console.log("Running SSL!");
+
+			return https.createServer(
+				{
+					key: fs.readFileSync(process.env.SSL_KEY_PATH),
+					cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+				},
+				app
+			);
+		} else return app;
+	})(!!process.env.SSL_KEY_PATH && !!process.env.SSL_CERT_PATH);
 
 	server.listen(process.env.PORT, () =>
 		console.log(`Server running on ${process.env.PORT}`)
